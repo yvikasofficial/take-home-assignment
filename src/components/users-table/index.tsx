@@ -124,7 +124,10 @@ export function UsersTable() {
             >
               <TableHeader>
                 {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow key={headerGroup.id}>
+                  <TableRow
+                    key={headerGroup.id}
+                    className="!bg-gray-800 text-white"
+                  >
                     {headerGroup.headers.map((header) => (
                       <DraggableHeader key={header.id} header={header} />
                     ))}
@@ -205,15 +208,19 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
   };
 
   return (
-    <TableHead ref={setNodeRef} style={style} className="group relative">
-      <div className="flex items-center gap-2">
+    <TableHead
+      ref={setNodeRef}
+      style={style}
+      className="group relative bg-gray-800 text-white"
+    >
+      <div className="flex items-center justify-between gap-2">
         {header.isPlaceholder
           ? null
           : flexRender(header.column.columnDef.header, header.getContext())}
         <button
           {...attributes}
           {...listeners}
-          className="opacity-0 group-hover:opacity-100 transition-opacity"
+          className="transition-opacity cursor-grab opacity-0 group-hover:opacity-100"
         >
           <GripVertical className="h-4 w-4" />
         </button>
