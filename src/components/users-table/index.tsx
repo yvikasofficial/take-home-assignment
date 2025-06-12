@@ -9,6 +9,7 @@ import {
   getSortedRowModel,
   useReactTable,
   type ColumnFiltersState,
+  type Header,
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
@@ -24,6 +25,11 @@ import {
 } from "@/components/ui/table";
 import { useGetUsers } from "@/services/user/use-get-users";
 import { columns } from "./columns";
+import { SortableContext, useSortable } from "@dnd-kit/sortable";
+import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import type { User } from "@/types";
+import { DndContext, type DragEndEvent } from "@dnd-kit/core";
 
 export function UsersTable() {
   const [page, setPage] = React.useState(1);
@@ -35,6 +41,7 @@ export function UsersTable() {
   );
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
+  const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
 
   const table = useReactTable({
     data: data?.users ?? [],
@@ -50,8 +57,27 @@ export function UsersTable() {
       sorting,
       columnFilters,
       columnVisibility,
+      columnOrder,
     },
   });
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = columnOrder.indexOf(active.id as string);
+      const newIndex = columnOrder.indexOf(over.id as string);
+      const newColumnOrder = [...columnOrder];
+      newColumnOrder.splice(oldIndex, 1);
+      newColumnOrder.splice(newIndex, 0, active.id as string);
+      setColumnOrder(newColumnOrder);
+    }
+  };
+
+  React.useEffect(() => {
+    if (table.getAllColumns().length > 0 && columnOrder.length === 0) {
+      setColumnOrder(table.getAllColumns().map((column) => column.id));
+    }
+  }, [table.getAllColumns(), columnOrder.length]);
 
   return (
     <div className="w-full">
@@ -68,54 +94,52 @@ export function UsersTable() {
         />
       </div>
       <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  );
-                })}
-              </TableRow>
-            ))}
-          </TableHeader>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
+        <DndContext onDragEnd={handleDragEnd}>
+          <Table>
+            <SortableContext
+              items={columnOrder}
+              strategy={horizontalListSortingStrategy}
+            >
+              <TableHeader>
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow key={headerGroup.id}>
+                    {headerGroup.headers.map((header) => (
+                      <DraggableHeader key={header.id} header={header} />
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+            </SortableContext>
+            <TableBody>
+              {table.getRowModel().rows?.length ? (
+                table.getRowModel().rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell
+                    colSpan={columns.length}
+                    className="h-24 text-center"
+                  >
+                    No results.
+                  </TableCell>
                 </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+              )}
+            </TableBody>
+          </Table>
+        </DndContext>
       </div>
       <div className="flex items-center justify-end space-x-2 py-4">
         <Button
@@ -141,3 +165,22 @@ export function UsersTable() {
     </div>
   );
 }
+
+const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
+  const { attributes, listeners, setNodeRef, transition, transform } =
+    useSortable({
+      id: header.id,
+    });
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    cursor: "grab",
+  };
+  return (
+    <TableHead ref={setNodeRef} style={style} {...attributes} {...listeners}>
+      {header.isPlaceholder
+        ? null
+        : flexRender(header.column.columnDef.header, header.getContext())}
+    </TableHead>
+  );
+};
