@@ -29,7 +29,19 @@ import { SortableContext, useSortable } from "@dnd-kit/sortable";
 import { horizontalListSortingStrategy } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import type { User } from "@/types";
-import { DndContext, type DragEndEvent } from "@dnd-kit/core";
+import {
+  DndContext,
+  type DragEndEvent,
+  KeyboardSensor,
+  MouseSensor,
+  TouchSensor,
+  closestCenter,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
+import { arrayMove } from "@dnd-kit/sortable";
+import { GripVertical } from "lucide-react";
 
 export function UsersTable() {
   const [page, setPage] = React.useState(1);
@@ -42,6 +54,12 @@ export function UsersTable() {
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({});
   const [columnOrder, setColumnOrder] = React.useState<string[]>([]);
+
+  const sensors = useSensors(
+    useSensor(MouseSensor, {}),
+    useSensor(TouchSensor, {}),
+    useSensor(KeyboardSensor, {})
+  );
 
   const table = useReactTable({
     data: data?.users ?? [],
@@ -64,12 +82,11 @@ export function UsersTable() {
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
     if (over && active.id !== over.id) {
-      const oldIndex = columnOrder.indexOf(active.id as string);
-      const newIndex = columnOrder.indexOf(over.id as string);
-      const newColumnOrder = [...columnOrder];
-      newColumnOrder.splice(oldIndex, 1);
-      newColumnOrder.splice(newIndex, 0, active.id as string);
-      setColumnOrder(newColumnOrder);
+      setColumnOrder((columnOrder) => {
+        const oldIndex = columnOrder.indexOf(active.id as string);
+        const newIndex = columnOrder.indexOf(over.id as string);
+        return arrayMove(columnOrder, oldIndex, newIndex);
+      });
     }
   };
 
@@ -94,7 +111,12 @@ export function UsersTable() {
         />
       </div>
       <div className="rounded-md border">
-        <DndContext onDragEnd={handleDragEnd}>
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          modifiers={[restrictToHorizontalAxis]}
+          onDragEnd={handleDragEnd}
+        >
           <Table>
             <SortableContext
               items={columnOrder}
@@ -167,20 +189,35 @@ export function UsersTable() {
 }
 
 const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
-  const { attributes, listeners, setNodeRef, transition, transform } =
+  const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
       id: header.id,
     });
+
   const style = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    cursor: "grab",
+    opacity: isDragging ? 0.8 : 1,
+    position: "relative" as const,
+    transform: CSS.Translate.toString(transform),
+    transition: "width transform 0.2s ease-in-out",
+    whiteSpace: "nowrap" as const,
+    width: header.column.getSize(),
+    zIndex: isDragging ? 1 : 0,
   };
+
   return (
-    <TableHead ref={setNodeRef} style={style} {...attributes} {...listeners}>
-      {header.isPlaceholder
-        ? null
-        : flexRender(header.column.columnDef.header, header.getContext())}
+    <TableHead ref={setNodeRef} style={style} className="group relative">
+      <div className="flex items-center gap-2">
+        {header.isPlaceholder
+          ? null
+          : flexRender(header.column.columnDef.header, header.getContext())}
+        <button
+          {...attributes}
+          {...listeners}
+          className="opacity-0 group-hover:opacity-100 transition-opacity"
+        >
+          <GripVertical className="h-4 w-4" />
+        </button>
+      </div>
     </TableHead>
   );
 };
