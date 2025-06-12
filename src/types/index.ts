@@ -6,3 +6,10 @@ export interface User {
   city: string;
   registeredDate: Date;
 }
+
+export interface ApiResponse<T> {
+  users: T[];
+  totalPages: number;
+  currentPage: number;
+  totalUsers: number;
+}
