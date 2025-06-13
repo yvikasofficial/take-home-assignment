@@ -22,8 +22,6 @@ import {
   Trash,
   MoreVertical,
   Plus,
-  Link,
-  Mail,
   MapPin,
   Calendar,
 } from "lucide-react";
@@ -32,7 +30,7 @@ import { Input } from "@/components/ui/input";
 import { UserAddModal } from "./user-add-modal";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { differenceInDays, isToday } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { UserDeleteModal } from "./user-delete-modal";
 import { UserEditModal } from "./user-edit-modal";
 import { UserDetailsModal } from "./user-details-modal";
@@ -43,7 +41,7 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const UsersTable = () => {
   const { data, isLoading } = useGetUsers();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const [_searchParams, setSearchParams] = useSearchParams();
   const [searchQuery, setSearchQuery] = useState("");
 
   const columnDefs = [

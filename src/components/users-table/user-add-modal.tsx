@@ -66,7 +66,7 @@ export function UserAddModal() {
         handleClose();
         toast.success("User added successfully!");
       },
-      onError: (error: any) => {
+      onError: (_error: any) => {
         toast.error("Failed to add user. Please try again.");
       },
     });

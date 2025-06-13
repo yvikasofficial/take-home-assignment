@@ -32,7 +32,7 @@ export function UserDeleteModal() {
           handleClose();
           toast.success("User deleted successfully!");
         },
-        onError: (error: any) => {
+        onError: (_error: any) => {
           toast.error("Failed to delete user. Please try again.");
         },
       }

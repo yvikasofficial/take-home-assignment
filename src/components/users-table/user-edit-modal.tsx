@@ -85,7 +85,7 @@ export function UserEditModal() {
           handleClose();
           toast.success("User updated successfully!");
         },
-        onError: (error: any) => {
+        onError: (_error: any) => {
           toast.error("Failed to update user. Please try again.");
         },
       }
