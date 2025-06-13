@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
 import * as React from "react";
@@ -122,7 +123,6 @@ export function UsersTable() {
     }
   }, [table.getAllColumns(), columnOrder.length]);
 
-  const parentRef = React.useRef<HTMLDivElement>(null);
   const tableContainerRef = React.useRef<HTMLTableSectionElement>(null);
 
   const { rows } = table.getRowModel();
