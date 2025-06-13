@@ -6,7 +6,7 @@ export const useGetUsers = (page = 1, pageSize = 10) => {
     queryKey: ["users", page, pageSize],
     queryFn: () => {
       return {
-        users: generateFakeUsers().slice(0, 50),
+        users: generateFakeUsers(),
         totalPages: 1,
         currentPage: 1,
         totalUsers: 10,

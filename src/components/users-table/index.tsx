@@ -42,9 +42,10 @@ import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import { arrayMove } from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useVirtualizer } from "@tanstack/react-virtual";
 
 export function UsersTable() {
-  const { data } = useGetUsers();
+  const { data, isLoading } = useGetUsers();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -121,6 +122,22 @@ export function UsersTable() {
     }
   }, [table.getAllColumns(), columnOrder.length]);
 
+  const parentRef = React.useRef<HTMLDivElement>(null);
+  const tableContainerRef = React.useRef<HTMLTableSectionElement>(null);
+
+  const { rows } = table.getRowModel();
+
+  const rowVirtualizer = useVirtualizer({
+    getScrollElement: () => tableContainerRef.current,
+    count: rows.length,
+    estimateSize: () => 50,
+    overscan: 20,
+  });
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
   return (
     <div className="w-full">
       <div className="flex items-center py-4">
@@ -142,56 +159,62 @@ export function UsersTable() {
         modifiers={[restrictToHorizontalAxis]}
         onDragEnd={handleDragEnd}
       >
-        <Table
-          className="rounded-md border-border w-full h-10 overflow-clip relative"
-          containerClassName="h-[500px] overflow-y-scroll"
-        >
-          <SortableContext
-            items={columnOrder}
-            strategy={horizontalListSortingStrategy}
-          >
-            <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md  bg-stone-700">
-              {table.getHeaderGroups().map((headerGroup) => (
-                <TableRow
-                  key={headerGroup.id}
-                  className="!bg-gray-800 text-white"
-                >
-                  {headerGroup.headers.map((header) => (
-                    <DraggableHeader key={header.id} header={header} />
+        <div className="rounded-md border">
+          <div className="h-[500px] overflow-auto" ref={tableContainerRef}>
+            <Table>
+              <SortableContext
+                items={columnOrder}
+                strategy={horizontalListSortingStrategy}
+              >
+                <TableHeader className="sticky top-0 bg-stone-700">
+                  {table.getHeaderGroups().map((headerGroup) => (
+                    <TableRow
+                      key={headerGroup.id}
+                      className="!bg-gray-800 text-white"
+                    >
+                      {headerGroup.headers.map((header) => (
+                        <DraggableHeader key={header.id} header={header} />
+                      ))}
+                    </TableRow>
                   ))}
-                </TableRow>
-              ))}
-            </TableHeader>
-          </SortableContext>
-          <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
+                </TableHeader>
+              </SortableContext>
+              <TableBody className="relative">
+                <div
+                  style={{
+                    height: `${rowVirtualizer.getTotalSize()}px`,
+                    width: "100%",
+                    position: "relative",
+                  }}
                 >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
-            ) : (
-              <TableRow>
-                <TableCell
-                  colSpan={columns.length}
-                  className="h-24 text-center"
-                >
-                  No results.
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                    const row = rows[virtualRow.index];
+                    return (
+                      <TableRow
+                        key={row.id}
+                        data-state={row.getIsSelected() && "selected"}
+                        className="absolute w-full"
+                        style={{
+                          height: `${virtualRow.size}px`,
+                          transform: `translateY(${virtualRow.start}px)`,
+                        }}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext()
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
+                </div>
+              </TableBody>
+            </Table>
+          </div>
+        </div>
       </DndContext>
     </div>
   );

@@ -2,7 +2,7 @@ import type { User } from "@/types";
 import { faker } from "@faker-js/faker";
 
 const STORAGE_KEY = "fake_users";
-const USERS_COUNT = 1000;
+const USERS_COUNT = 20000;
 
 /**
  * Generate a single fake user
