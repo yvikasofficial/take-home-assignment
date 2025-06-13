@@ -89,9 +89,6 @@ interface User {
   email: string;
   city: string;
   registeredDate: Date;
-  // Computed fields
-  fullName: string; // firstName + lastName
-  daysSinceRegistered: number; // Days since registration
 }
 ```
 
