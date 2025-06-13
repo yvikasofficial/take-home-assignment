@@ -21,7 +21,7 @@ import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { Search } from "lucide-react";
 import { useState } from "react";
-import { differenceInDays, isToday, parseISO } from "date-fns";
+import { differenceInDays, isToday } from "date-fns";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -90,7 +90,9 @@ const UsersTable = () => {
                 View Details
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => console.log("Edit", params.data)}
+                onClick={() => {
+                  setSearchParams({ editUser: user.id });
+                }}
               >
                 <Edit className="mr-2 h-4 w-4" />
                 Edit

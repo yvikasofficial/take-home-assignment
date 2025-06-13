@@ -1,4 +1,5 @@
 import { UserAddModal } from "./components/user-add-modal";
+import { UserEditModal } from "./components/user-edit-modal";
 import { UserDetailsModal } from "./components/user-details-modal";
 import UsersTable from "./components/users-table";
 import { BrowserRouter } from "react-router-dom";
@@ -10,6 +11,7 @@ const App = () => {
       <div className="p-6">
         <UserDetailsModal />
         <UserAddModal />
+        <UserEditModal />
         <UsersTable />
         <Toaster />
       </div>
