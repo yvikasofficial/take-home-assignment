@@ -251,7 +251,13 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
   return (
     <TableHead
       ref={setNodeRef}
-      style={style}
+      style={
+        isActions
+          ? {
+              width: header.column.getSize(),
+            }
+          : style
+      }
       className="group relative bg-gray-800 text-white"
       data-id={header.id}
     >
