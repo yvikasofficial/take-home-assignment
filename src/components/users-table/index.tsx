@@ -16,7 +16,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
-import { Eye, Edit, Trash, MoreVertical, Plus } from "lucide-react";
+import {
+  Eye,
+  Edit,
+  Trash,
+  MoreVertical,
+  Plus,
+  Link,
+  Mail,
+  MapPin,
+  Calendar,
+} from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
 import { UserAddModal } from "./user-add-modal";
@@ -26,6 +36,8 @@ import { differenceInDays, isToday } from "date-fns";
 import { UserDeleteModal } from "./user-delete-modal";
 import { UserEditModal } from "./user-edit-modal";
 import { UserDetailsModal } from "./user-details-modal";
+import { Avatar, AvatarFallback } from "../ui/avatar";
+import { Badge } from "../ui/badge";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -35,18 +47,57 @@ const UsersTable = () => {
   const [searchQuery, setSearchQuery] = useState("");
 
   const columnDefs = [
-    { field: "id", headerName: "ID", width: 100 },
+    {
+      field: "id",
+      headerName: "ID",
+      width: 100,
+      cellRenderer: (params: ICellRendererParams) => {
+        return (
+          <div className="text-center">
+            <Badge variant="outline">#{params.data.id}</Badge>
+          </div>
+        );
+      },
+    },
 
     {
       headerName: "Full Name",
       flex: 1,
-      valueGetter: (params: ValueGetterParams) => {
-        return `${params.data.firstName} ${params.data.lastName}`;
+      cellRenderer: (params: ICellRendererParams) => {
+        return (
+          <div className="flex items-center gap-2">
+            <Avatar>
+              <AvatarFallback className="!bg-[#784778] text-white">
+                {params.data.firstName[0]}
+                {params.data.lastName[0]}
+              </AvatarFallback>
+            </Avatar>
+            {`${params.data.firstName} ${params.data.lastName}`}
+          </div>
+        );
       },
       minWidth: 200,
     },
-    { field: "email", headerName: "Email", flex: 1, minWidth: 200 },
-    { field: "city", headerName: "City", flex: 1, minWidth: 200 },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      minWidth: 200,
+    },
+    {
+      field: "city",
+      headerName: "City",
+      flex: 1,
+      minWidth: 200,
+      cellRenderer: (params: ICellRendererParams) => {
+        return (
+          <div className="flex items-center h-full gap-2">
+            <MapPin className="h-4 w-4 text-muted-foreground" />
+            {params.data.city}
+          </div>
+        );
+      },
+    },
     {
       field: "registeredDate",
       headerName: "Registered Date",
@@ -62,12 +113,14 @@ const UsersTable = () => {
         const registeredDate = params.data.registeredDate;
         return differenceInDays(new Date(), registeredDate);
       },
-      valueFormatter: (params: ValueFormatterParams) => {
-        const registeredDate = params.data.registeredDate;
-        if (isToday(registeredDate)) {
-          return "Today";
-        }
-        return `${params.value} days`;
+
+      cellRenderer: (params: ICellRendererParams) => {
+        return (
+          <div className="flex items-center h-full gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            {params.value === 0 ? "Today" : `${params.value} days`}
+          </div>
+        );
       },
     },
     {
