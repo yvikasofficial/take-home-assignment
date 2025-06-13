@@ -1,6 +1,6 @@
-# Thrive Table - React Data Table
+# React Data Table
 
-A React data table implementation with 500+ rows of data, featuring virtualization, sorting, column reordering, and CRUD operations.
+A React data table implementation with 20,000 rows of data, featuring virtualization, sorting, column reordering, and CRUD operations.
 
 ## 🎯 Core Requirements
 
@@ -36,6 +36,7 @@ A React data table implementation with 500+ rows of data, featuring virtualizati
 - **Tailwind CSS** - Styling and responsive design
 - **Faker.js** - Realistic test data generation
 - **date-fns** - Date calculations
+- **react-query** - State management
 
 ## 🚦 How to Use
 
