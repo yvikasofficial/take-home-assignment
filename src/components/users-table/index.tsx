@@ -32,6 +32,7 @@ import type { User } from "@/types";
 import {
   DndContext,
   type DragEndEvent,
+  type DragMoveEvent,
   KeyboardSensor,
   MouseSensor,
   TouchSensor,
@@ -42,6 +43,7 @@ import {
 import { restrictToHorizontalAxis } from "@dnd-kit/modifiers";
 import { arrayMove } from "@dnd-kit/sortable";
 import { GripVertical } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function UsersTable() {
   const [page, setPage] = React.useState(1);
@@ -81,18 +83,54 @@ export function UsersTable() {
 
   const handleDragEnd = (event: DragEndEvent) => {
     const { active, over } = event;
-    if (over && active.id !== over.id) {
+    if (
+      over &&
+      active.id !== over.id &&
+      active.id !== "actions" &&
+      over.id !== "actions"
+    ) {
       setColumnOrder((columnOrder) => {
-        const oldIndex = columnOrder.indexOf(active.id as string);
-        const newIndex = columnOrder.indexOf(over.id as string);
-        return arrayMove(columnOrder, oldIndex, newIndex);
+        const actionsColumn = columnOrder.includes("actions")
+          ? ["actions"]
+          : [];
+        const nonActionColumns = columnOrder.filter((id) => id !== "actions");
+        const oldIndex = nonActionColumns.indexOf(active.id as string);
+        const newIndex = nonActionColumns.indexOf(over.id as string);
+        const reorderedColumns = arrayMove(
+          nonActionColumns,
+          oldIndex,
+          newIndex
+        );
+        return [...reorderedColumns, ...actionsColumn];
       });
+    }
+  };
+
+  const handleDragMove = (event: DragMoveEvent) => {
+    const { over, active } = event;
+    console.log(over?.id);
+    console.log(event);
+
+    if (over?.id === "actions") {
+      const draggedItem = document.querySelector(
+        `[data-id="${active.id}"]`
+      ) as HTMLElement;
+      if (draggedItem) {
+        draggedItem.style.transform = "translate(0px, 0px)";
+        // draggedItem.style.pointerEvents = "none";
+        // console.log("Dragged Items");
+        // setTimeout(() => {
+        //   draggedItem.style.pointerEvents = "auto";
+        // }, 100);
+      }
     }
   };
 
   React.useEffect(() => {
     if (table.getAllColumns().length > 0 && columnOrder.length === 0) {
-      setColumnOrder(table.getAllColumns().map((column) => column.id));
+      const columns = table.getAllColumns().map((column) => column.id);
+      const nonActionColumns = columns.filter((id) => id !== "actions");
+      setColumnOrder([...nonActionColumns, "actions"]);
     }
   }, [table.getAllColumns(), columnOrder.length]);
 
@@ -112,6 +150,7 @@ export function UsersTable() {
       </div>
       <div className="rounded-md border">
         <DndContext
+          onDragMove={handleDragMove}
           sensors={sensors}
           collisionDetection={closestCenter}
           modifiers={[restrictToHorizontalAxis]}
@@ -192,9 +231,11 @@ export function UsersTable() {
 }
 
 const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
+  const isActions = header.id === "actions";
   const { attributes, listeners, setNodeRef, transform, isDragging } =
     useSortable({
       id: header.id,
+      disabled: isActions,
     });
 
   const style = {
@@ -212,18 +253,26 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
       ref={setNodeRef}
       style={style}
       className="group relative bg-gray-800 text-white"
+      data-id={header.id}
     >
-      <div className="flex items-center justify-between gap-2">
+      <div
+        className={cn(
+          "flex items-center justify-between gap-2",
+          isActions && "opacity-0"
+        )}
+      >
         {header.isPlaceholder
           ? null
           : flexRender(header.column.columnDef.header, header.getContext())}
-        <button
-          {...attributes}
-          {...listeners}
-          className="transition-opacity cursor-grab opacity-0 group-hover:opacity-100"
-        >
-          <GripVertical className="h-4 w-4" />
-        </button>
+        {header.id !== "actions" && (
+          <button
+            {...attributes}
+            {...listeners}
+            className="transition-opacity cursor-grab opacity-0 group-hover:opacity-100"
+          >
+            <GripVertical className="h-4 w-4" />
+          </button>
+        )}
       </div>
     </TableHead>
   );
