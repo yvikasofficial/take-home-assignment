@@ -6,16 +6,19 @@ function Table({
   className,
   containerClassName,
   containerRef,
+  containerStyle,
   ...props
 }: React.ComponentProps<"table"> & {
   containerClassName?: string;
   containerRef?: React.RefObject<HTMLDivElement>;
+  containerStyle?: React.CSSProperties;
 }) {
   return (
     <div
       data-slot="table-container"
       className={cn("relative w-full overflow-x-auto", containerClassName)}
       ref={containerRef}
+      style={containerStyle}
     >
       <table
         data-slot="table"

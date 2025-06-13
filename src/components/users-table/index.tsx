@@ -160,21 +160,25 @@ export function UsersTable() {
         modifiers={[restrictToHorizontalAxis]}
         onDragEnd={handleDragEnd}
       >
-        <div className="rounded-md border">
+        <div
+          className="h-[500px] overflow-y-auto rounded-md border relative"
+          ref={tableContainerRef}
+        >
           <Table
-            className="rounded-md border-border w-full h-10 overflow-clip relative"
-            containerClassName="h-[500px] overflow-y-auto"
-            containerRef={tableContainerRef as any}
+            containerClassName="rounded-md border-border w-full overflow-clip"
+            containerStyle={{
+              height: `${rowVirtualizer.getTotalSize()}px`,
+            }}
           >
             <SortableContext
               items={columnOrder}
               strategy={horizontalListSortingStrategy}
             >
-              <TableHeader className="sticky top-0 bg-stone-700 z-[100]">
+              <TableHeader className="sticky top-0 bg-stone-700 z-[999]">
                 {table.getHeaderGroups().map((headerGroup) => (
                   <TableRow
                     key={headerGroup.id}
-                    className="!bg-gray-800 text-white"
+                    className="!bg-gray-800 text-white w-full"
                   >
                     {headerGroup.headers.map((header) => (
                       <DraggableHeader key={header.id} header={header} />
@@ -183,28 +187,27 @@ export function UsersTable() {
                 ))}
               </TableHeader>
             </SortableContext>
-            <TableBody
-              style={{
-                height: `${rowVirtualizer.getTotalSize()}px`,
-                position: "relative",
-              }}
-              className="relative"
-            >
-              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+            <TableBody style={{}} className="relative">
+              {rowVirtualizer.getVirtualItems().map((virtualRow, index) => {
                 const row = rows[virtualRow.index];
                 return (
                   <TableRow
                     key={row.id}
                     data-state={row.getIsSelected() && "selected"}
-                    className="absolute w-full"
                     style={{
-                      height: `${virtualRow.size}px`,
-                      transform: `translateY(${virtualRow.start}px)`,
+                      height: 50,
+                      transform: `translateY(${
+                        virtualRow.start - index * virtualRow.size
+                      }px)`,
                       width: "100%",
                     }}
                   >
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
+                      <TableCell
+                        key={cell.id}
+                        className="h-[50px]"
+                        // className="flex-1 truncate min-w-[150px] max-w-full"
+                      >
                         {flexRender(
                           cell.column.columnDef.cell,
                           cell.getContext()
@@ -249,7 +252,7 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
             }
           : style
       }
-      className="group relative bg-gray-800 text-white"
+      className="group relative bg-gray-800 text-white flex-1"
       data-id={header.id}
     >
       <div
