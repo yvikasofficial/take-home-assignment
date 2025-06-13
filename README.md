@@ -2,11 +2,16 @@
 
 A React data table implementation with 20,000 rows of data, featuring virtualization, sorting, column reordering, and CRUD operations.
 
+## 🌐 Live Demo
+
+Check out the live version of the application:
+**[https://take-home-assignment-eight.vercel.app/](https://take-home-assignment-eight.vercel.app/)**
+
 ## 🎯 Core Requirements
 
 ### Required Features ✅
 
-- **20,000 Row Dataset** - Generated with realistic test data
+- **20,000 Row Dataset** - Generated with realistic test data and saved to localStorage
 - **Required Columns**: ID, First Name, Last Name, Email, City, Registered Date
 - **Computed Columns**:
   - Full Name (First Name + Last Name)
@@ -17,17 +22,9 @@ A React data table implementation with 20,000 rows of data, featuring virtualiza
 
 ## 🚀 Additional Bonus Features
 
-### CRUD Operations
-
-- **Create** - Add new user records
-- **Read** - View and search through data
-- **Update** - Edit existing user information
-- **Delete** - Remove user records
-
-### Enhanced UI/UX
-
-- **Responsive Design** - Works on all screen sizes
-- **Search & Filter** - Find specific records quickly
+- **Create, Read, Update, Delete** user records
+- **Search & Filter** functionality
+- **Responsive Design** for all screen sizes
 
 ## 🛠️ Tech Stack
 
@@ -37,6 +34,7 @@ A React data table implementation with 20,000 rows of data, featuring virtualiza
 - **Faker.js** - Realistic test data generation
 - **date-fns** - Date calculations
 - **react-query** - State management
+- **Shadcn** - Components library
 
 ## 🚦 How to Use
 
@@ -58,39 +56,6 @@ A React data table implementation with 20,000 rows of data, featuring virtualiza
    ```
    http://localhost:5173
    ```
-
-### Using the Table
-
-#### Basic Operations
-
-- **Sort**: Click any column header to sort data
-- **Reorder Columns**: Drag column headers to reorder
-- **Theme Toggle**: Click the theme button in the top-right
-- **Scroll**: Virtual scrolling handles large datasets smoothly
-
-#### CRUD Operations
-
-- **Add User**: Click "Add New User" button
-- **Edit User**: Click the edit icon in any row
-- **Delete User**: Click the delete icon in any row
-- **Bulk Delete**: Select multiple rows and click "Delete Selected"
-
-#### Search & Filter
-
-- **Global Search**: Use the search box to find users
-
-### Data Model
-
-```typescript
-interface User {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  city: string;
-  registeredDate: Date;
-}
-```
 
 ## 📋 Available Scripts
 
