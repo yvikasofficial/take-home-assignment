@@ -135,63 +135,64 @@ export function UsersTable() {
           className="max-w-sm"
         />
       </div>
-      <div className="rounded-md border">
-        <DndContext
-          onDragMove={handleDragMove}
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          modifiers={[restrictToHorizontalAxis]}
-          onDragEnd={handleDragEnd}
+      <DndContext
+        onDragMove={handleDragMove}
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        modifiers={[restrictToHorizontalAxis]}
+        onDragEnd={handleDragEnd}
+      >
+        <Table
+          className="rounded-md border-border w-full h-10 overflow-clip relative"
+          containerClassName="h-[500px] overflow-y-scroll"
         >
-          <Table>
-            <SortableContext
-              items={columnOrder}
-              strategy={horizontalListSortingStrategy}
-            >
-              <TableHeader>
-                {table.getHeaderGroups().map((headerGroup) => (
-                  <TableRow
-                    key={headerGroup.id}
-                    className="!bg-gray-800 text-white"
-                  >
-                    {headerGroup.headers.map((header) => (
-                      <DraggableHeader key={header.id} header={header} />
-                    ))}
-                  </TableRow>
-                ))}
-              </TableHeader>
-            </SortableContext>
-            <TableBody>
-              {table.getRowModel().rows?.length ? (
-                table.getRowModel().rows.map((row) => (
-                  <TableRow
-                    key={row.id}
-                    data-state={row.getIsSelected() && "selected"}
-                  >
-                    {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext()
-                        )}
-                      </TableCell>
-                    ))}
-                  </TableRow>
-                ))
-              ) : (
-                <TableRow>
-                  <TableCell
-                    colSpan={columns.length}
-                    className="h-24 text-center"
-                  >
-                    No results.
-                  </TableCell>
+          <SortableContext
+            items={columnOrder}
+            strategy={horizontalListSortingStrategy}
+          >
+            <TableHeader className="sticky w-full top-0 h-10 border-b-2 border-border rounded-t-md  bg-stone-700">
+              {table.getHeaderGroups().map((headerGroup) => (
+                <TableRow
+                  key={headerGroup.id}
+                  className="!bg-gray-800 text-white"
+                >
+                  {headerGroup.headers.map((header) => (
+                    <DraggableHeader key={header.id} header={header} />
+                  ))}
                 </TableRow>
-              )}
-            </TableBody>
-          </Table>
-        </DndContext>
-      </div>
+              ))}
+            </TableHeader>
+          </SortableContext>
+          <TableBody>
+            {table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.map((row) => (
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                >
+                  {row.getVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell
+                  colSpan={columns.length}
+                  className="h-24 text-center"
+                >
+                  No results.
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </DndContext>
     </div>
   );
 }
@@ -206,14 +207,11 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
 
   const style = {
     opacity: isDragging ? 0.8 : 1,
-    // position: "relastive" as const,
     transform: CSS.Translate.toString(transform),
     transition: "width transform 0.2s ease-in-out",
     whiteSpace: "nowrap" as const,
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
-    position: "sticky" as const,
-    top: 0,
   };
 
   return (
@@ -223,8 +221,6 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
         isActions
           ? {
               width: header.column.getSize(),
-              position: "sticky",
-              top: 0,
             }
           : style
       }
