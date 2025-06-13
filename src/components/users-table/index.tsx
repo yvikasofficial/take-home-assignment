@@ -19,9 +19,13 @@ import { Button } from "@/components/ui/button";
 import { Eye, Edit, Trash, MoreVertical, Plus } from "lucide-react";
 import { useSearchParams } from "react-router-dom";
 import { Input } from "@/components/ui/input";
+import { UserAddModal } from "./user-add-modal";
 import { Search } from "lucide-react";
 import { useState } from "react";
 import { differenceInDays, isToday } from "date-fns";
+import { UserDeleteModal } from "./user-delete-modal";
+import { UserEditModal } from "./user-edit-modal";
+import { UserDetailsModal } from "./user-details-modal";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -124,10 +128,17 @@ const UsersTable = () => {
 
   return (
     <div className="space-y-4">
+      <UserDetailsModal />
+      <UserAddModal />
+      <UserEditModal />
+      <UserDeleteModal />
       <div className="flex flex-col gap-1">
         <h4 className="text-2xl font-medium">Users</h4>
         <span className="text-sm text-muted-foreground">
-          A fully optimized table with search and pagination
+          A fully optimized table with occlusion scrolling and search.{" "}
+          <span className="font-medium">
+            Total records: {data?.totalUsers.toLocaleString()}
+          </span>
         </span>
       </div>
       <div className="flex justify-between items-center">

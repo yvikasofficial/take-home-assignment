@@ -5,11 +5,12 @@ export const useGetUsers = (page = 1, pageSize = 10) => {
   return useQuery({
     queryKey: ["users", page, pageSize],
     queryFn: () => {
+      const users = generateFakeUsers();
       return {
-        users: generateFakeUsers(),
+        users,
         totalPages: 1,
         currentPage: 1,
-        totalUsers: 10,
+        totalUsers: users.length,
       };
     },
   });
