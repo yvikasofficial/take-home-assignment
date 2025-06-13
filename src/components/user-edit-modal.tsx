@@ -115,6 +115,13 @@ export function UserEditModal() {
           <div className="py-8 flex justify-center">
             <Loader2 className="h-6 w-6 animate-spin" />
           </div>
+        ) : !user && editUserId ? (
+          <div className="py-8 flex flex-col items-center space-y-2">
+            <p className="text-muted-foreground">No user found with this ID.</p>
+            <Button variant="outline" onClick={handleClose}>
+              Close
+            </Button>
+          </div>
         ) : (
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">

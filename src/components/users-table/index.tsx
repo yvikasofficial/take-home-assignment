@@ -98,7 +98,9 @@ const UsersTable = () => {
                 Edit
               </DropdownMenuItem>
               <DropdownMenuItem
-                onClick={() => console.log("Delete", params.data)}
+                onClick={() => {
+                  setSearchParams({ deleteUser: user.id });
+                }}
               >
                 <Trash className="mr-2 h-4 w-4" />
                 Delete
