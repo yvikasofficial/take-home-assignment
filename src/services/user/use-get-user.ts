@@ -18,6 +18,7 @@ const fetchUserById = async (userId: string): Promise<User | undefined> => {
 
 export const useGetUser = (userId: string) => {
   return useQuery({
+    enabled: !!userId,
     queryKey: ["user", userId],
     queryFn: () => fetchUserById(userId),
   });
