@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 
@@ -160,60 +161,61 @@ export function UsersTable() {
         onDragEnd={handleDragEnd}
       >
         <div className="rounded-md border">
-          <div className="h-[500px] overflow-auto" ref={tableContainerRef}>
-            <Table>
-              <SortableContext
-                items={columnOrder}
-                strategy={horizontalListSortingStrategy}
-              >
-                <TableHeader className="sticky top-0 bg-stone-700">
-                  {table.getHeaderGroups().map((headerGroup) => (
-                    <TableRow
-                      key={headerGroup.id}
-                      className="!bg-gray-800 text-white"
-                    >
-                      {headerGroup.headers.map((header) => (
-                        <DraggableHeader key={header.id} header={header} />
-                      ))}
-                    </TableRow>
-                  ))}
-                </TableHeader>
-              </SortableContext>
-              <TableBody className="relative">
-                <div
-                  style={{
-                    height: `${rowVirtualizer.getTotalSize()}px`,
-                    width: "100%",
-                    position: "relative",
-                  }}
-                >
-                  {rowVirtualizer.getVirtualItems().map((virtualRow) => {
-                    const row = rows[virtualRow.index];
-                    return (
-                      <TableRow
-                        key={row.id}
-                        data-state={row.getIsSelected() && "selected"}
-                        className="absolute w-full"
-                        style={{
-                          height: `${virtualRow.size}px`,
-                          transform: `translateY(${virtualRow.start}px)`,
-                        }}
-                      >
-                        {row.getVisibleCells().map((cell) => (
-                          <TableCell key={cell.id}>
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext()
-                            )}
-                          </TableCell>
-                        ))}
-                      </TableRow>
-                    );
-                  })}
-                </div>
-              </TableBody>
-            </Table>
-          </div>
+          <Table
+            className="rounded-md border-border w-full h-10 overflow-clip relative"
+            containerClassName="h-[500px] overflow-y-auto"
+            containerRef={tableContainerRef as any}
+          >
+            <SortableContext
+              items={columnOrder}
+              strategy={horizontalListSortingStrategy}
+            >
+              <TableHeader className="sticky top-0 bg-stone-700 z-[100]">
+                {table.getHeaderGroups().map((headerGroup) => (
+                  <TableRow
+                    key={headerGroup.id}
+                    className="!bg-gray-800 text-white"
+                  >
+                    {headerGroup.headers.map((header) => (
+                      <DraggableHeader key={header.id} header={header} />
+                    ))}
+                  </TableRow>
+                ))}
+              </TableHeader>
+            </SortableContext>
+            <TableBody
+              style={{
+                height: `${rowVirtualizer.getTotalSize()}px`,
+                position: "relative",
+              }}
+              className="relative"
+            >
+              {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+                const row = rows[virtualRow.index];
+                return (
+                  <TableRow
+                    key={row.id}
+                    data-state={row.getIsSelected() && "selected"}
+                    className="absolute w-full"
+                    style={{
+                      height: `${virtualRow.size}px`,
+                      transform: `translateY(${virtualRow.start}px)`,
+                      width: "100%",
+                    }}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         </div>
       </DndContext>
     </div>
@@ -233,8 +235,8 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
     transform: CSS.Translate.toString(transform),
     transition: "width transform 0.2s ease-in-out",
     whiteSpace: "nowrap" as const,
-    width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
+    width: header.column.getSize(),
   };
 
   return (
