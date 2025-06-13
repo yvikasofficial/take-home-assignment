@@ -1,54 +1,106 @@
-# React + TypeScript + Vite
+# Thrive Table - React Data Table
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A React data table implementation with 500+ rows of data, featuring virtualization, sorting, column reordering, and CRUD operations.
 
-Currently, two official plugins are available:
+## 🎯 Core Requirements
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Required Features ✅
 
-## Expanding the ESLint configuration
+- **20,000 Row Dataset** - Generated with realistic test data
+- **Required Columns**: ID, First Name, Last Name, Email, City, Registered Date
+- **Computed Columns**:
+  - Full Name (First Name + Last Name)
+  - DSR (Days Since Registered)
+- **Column Reordering** - Drag and drop to reorder columns
+- **Sorting** - Click column headers to sort
+- **Virtual Scrolling** - Smooth performance with large datasets
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+## 🚀 Additional Bonus Features
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+### CRUD Operations
+
+- **Create** - Add new user records
+- **Read** - View and search through data
+- **Update** - Edit existing user information
+- **Delete** - Remove user records
+
+### Enhanced UI/UX
+
+- **Responsive Design** - Works on all screen sizes
+- **Search & Filter** - Find specific records quickly
+
+## 🛠️ Tech Stack
+
+- **React 19** - Modern React with TypeScript
+- **Vite** - Fast development and build tool
+- **Tailwind CSS** - Styling and responsive design
+- **Faker.js** - Realistic test data generation
+- **date-fns** - Date calculations
+
+## 🚦 How to Use
+
+### Quick Start
+
+1. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+2. **Start development server**
+
+   ```bash
+   npm run dev
+   ```
+
+3. **Open in browser**
+   ```
+   http://localhost:5173
+   ```
+
+### Using the Table
+
+#### Basic Operations
+
+- **Sort**: Click any column header to sort data
+- **Reorder Columns**: Drag column headers to reorder
+- **Theme Toggle**: Click the theme button in the top-right
+- **Scroll**: Virtual scrolling handles large datasets smoothly
+
+#### CRUD Operations
+
+- **Add User**: Click "Add New User" button
+- **Edit User**: Click the edit icon in any row
+- **Delete User**: Click the delete icon in any row
+- **Bulk Delete**: Select multiple rows and click "Delete Selected"
+
+#### Search & Filter
+
+- **Global Search**: Use the search box to find users
+
+### Data Model
+
+```typescript
+interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  city: string;
+  registeredDate: Date;
+  // Computed fields
+  fullName: string; // firstName + lastName
+  daysSinceRegistered: number; // Days since registration
+}
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## 📋 Available Scripts
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+- `npm run dev` - Start development server
+- `npm run build` - Build for production
+- `npm run preview` - Preview production build
+- `npm run lint` - Run code linting
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+---
+
+Built with React, TypeScript, and modern web technologies.
