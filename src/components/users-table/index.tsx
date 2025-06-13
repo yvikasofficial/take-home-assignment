@@ -16,11 +16,13 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Eye, Edit, Trash, MoreVertical } from "lucide-react";
+import { useSearchParams } from "react-router-dom";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 const UsersTable = () => {
   const { data, isLoading } = useGetUsers();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const columnDefs = [
     { field: "id", headerName: "ID", width: 100 },
@@ -72,7 +74,9 @@ const UsersTable = () => {
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
               <DropdownMenuItem
-                onClick={() => console.log("View", params.data)}
+                onClick={() => {
+                  setSearchParams({ user: params.data.id });
+                }}
               >
                 <Eye className="mr-2 h-4 w-4" />
                 View Details
