@@ -31,7 +31,6 @@ export const generateFakeUser = (): User => {
  * @returns {User[]} A list of fake users
  */
 export default function generateFakeUsers(): User[] {
-  localStorage.clear();
   const storedUsers = localStorage.getItem(STORAGE_KEY);
   if (storedUsers) {
     const users = JSON.parse(storedUsers);

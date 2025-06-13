@@ -8,6 +8,14 @@ import {
 import { ClientSideRowModelModule } from "ag-grid-community";
 import { useGetUsers } from "@/services/user/use-get-users";
 import type { User } from "@/types";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Button } from "@/components/ui/button";
+import { Eye, Edit, Trash, MoreVertical } from "lucide-react";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -23,9 +31,10 @@ const UsersTable = () => {
       valueGetter: (params: ValueGetterParams) => {
         return `${params.data.firstName} ${params.data.lastName}`;
       },
+      minWidth: 200,
     },
-    { field: "email", headerName: "Email", flex: 1 },
-    { field: "city", headerName: "City", flex: 1 },
+    { field: "email", headerName: "Email", flex: 1, minWidth: 200 },
+    { field: "city", headerName: "City", flex: 1, minWidth: 200 },
     {
       field: "registeredDate",
       headerName: "Registered Date",
@@ -48,11 +57,44 @@ const UsersTable = () => {
         return `${params.value} days`;
       },
     },
+    {
+      headerName: "",
+      pinned: "right",
+      width: 65,
+      suppressMovable: true,
+      cellRenderer: (params: any) => {
+        return (
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="ghost" className="h-6 w-6 p-0">
+                <MoreVertical className="h-4 w-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end">
+              <DropdownMenuItem
+                onClick={() => console.log("View", params.data)}
+              >
+                <Eye className="mr-2 h-4 w-4" />
+                View Details
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => console.log("Edit", params.data)}
+              >
+                <Edit className="mr-2 h-4 w-4" />
+                Edit
+              </DropdownMenuItem>
+              <DropdownMenuItem
+                onClick={() => console.log("Delete", params.data)}
+              >
+                <Trash className="mr-2 h-4 w-4" />
+                Delete
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        );
+      },
+    },
   ];
-
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
 
   return (
     <div className="ag-theme-quartz" style={{ height: "80vh", width: "100%" }}>
@@ -69,6 +111,14 @@ const UsersTable = () => {
         rowBuffer={100}
         rowSelection="multiple"
         suppressColumnMoveAnimation={false}
+        loadingOverlayComponent={"Loading..."}
+        loadingOverlayComponentParams={{
+          loadingMessage: "Loading users...",
+        }}
+        overlayLoadingTemplate={
+          '<span class="ag-overlay-loading-center">Loading users...</span>'
+        }
+        loading={isLoading}
       />
     </div>
   );
