@@ -136,9 +136,11 @@ const UsersTable = () => {
         <h4 className="text-2xl font-medium">Users</h4>
         <span className="text-sm text-muted-foreground">
           A fully optimized table with occlusion scrolling and search.{" "}
-          <span className="font-medium">
-            Total records: {data?.totalUsers.toLocaleString()}
-          </span>
+          {data?.totalUsers && data?.totalUsers > 0 && (
+            <span className="font-medium">
+              Total records: {data?.totalUsers.toLocaleString()}
+            </span>
+          )}
         </span>
       </div>
       <div className="flex justify-between items-center">
@@ -152,7 +154,7 @@ const UsersTable = () => {
           />
         </div>
         <Button onClick={() => setSearchParams({ addUser: "true" })}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-1 h-4 w-4" />
           Add User
         </Button>
       </div>
