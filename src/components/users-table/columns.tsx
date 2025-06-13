@@ -52,6 +52,7 @@ export const columns: ColumnDef<User>[] = [
   {
     id: "actions",
     header: "Actions",
+    size: 50,
     cell: () => {
       return (
         <DropdownMenu>

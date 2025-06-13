@@ -5,7 +5,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable,
   type ColumnFiltersState,
@@ -13,7 +12,6 @@ import {
   type SortingState,
   type VisibilityState,
 } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -46,9 +44,7 @@ import { GripVertical } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export function UsersTable() {
-  const [page, setPage] = React.useState(1);
-  const pageSize = 10;
-  const { data } = useGetUsers(page, pageSize);
+  const { data } = useGetUsers();
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
     []
@@ -69,7 +65,6 @@ export function UsersTable() {
     onSortingChange: setSorting,
     onColumnFiltersChange: setColumnFilters,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     getSortedRowModel: getSortedRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
@@ -108,20 +103,12 @@ export function UsersTable() {
 
   const handleDragMove = (event: DragMoveEvent) => {
     const { over, active } = event;
-    console.log(over?.id);
-    console.log(event);
-
     if (over?.id === "actions") {
       const draggedItem = document.querySelector(
         `[data-id="${active.id}"]`
       ) as HTMLElement;
       if (draggedItem) {
         draggedItem.style.transform = "translate(0px, 0px)";
-        // draggedItem.style.pointerEvents = "none";
-        // console.log("Dragged Items");
-        // setTimeout(() => {
-        //   draggedItem.style.pointerEvents = "auto";
-        // }, 100);
       }
     }
   };
@@ -205,27 +192,6 @@ export function UsersTable() {
           </Table>
         </DndContext>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page - 1)}
-          disabled={page === 1}
-        >
-          Previous
-        </Button>
-        <div className="text-sm">
-          Page {page} of {data?.totalPages ?? 1}
-        </div>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => setPage(page + 1)}
-          disabled={!data || page >= data.totalPages}
-        >
-          Next
-        </Button>
-      </div>
     </div>
   );
 }
@@ -240,12 +206,14 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
 
   const style = {
     opacity: isDragging ? 0.8 : 1,
-    position: "relative" as const,
+    // position: "relastive" as const,
     transform: CSS.Translate.toString(transform),
     transition: "width transform 0.2s ease-in-out",
     whiteSpace: "nowrap" as const,
     width: header.column.getSize(),
     zIndex: isDragging ? 1 : 0,
+    position: "sticky" as const,
+    top: 0,
   };
 
   return (
@@ -255,6 +223,8 @@ const DraggableHeader = ({ header }: { header: Header<User, unknown> }) => {
         isActions
           ? {
               width: header.column.getSize(),
+              position: "sticky",
+              top: 0,
             }
           : style
       }
