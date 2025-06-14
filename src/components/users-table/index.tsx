@@ -165,6 +165,16 @@ const UsersTable = () => {
         );
       },
     },
+    {
+      field: "firstName",
+      headerName: "First Name",
+      width: 150,
+    },
+    {
+      field: "lastName",
+      headerName: "Last Name",
+      width: 150,
+    },
   ];
 
   const filteredData = data?.users?.filter((user) => {
